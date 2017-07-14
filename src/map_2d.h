@@ -1,5 +1,5 @@
-#ifndef MAP2D_H
-#define MAP2D_H
+#ifndef MAP_2D_H
+#define MAP_2D_H
 
 #include <list>
 #include <set>
@@ -53,7 +53,7 @@ class Map2d::Node {
 public:
     static void notifyDest( Coord dest );
     void setParent( const Node& parent );
-    void setUserCost( const short& cost );
+    void setUserCost( const short& cost = );
     Node& getParent();
     int getHeuristic();
     Node( Coord coord );
@@ -67,4 +67,4 @@ private:
     unsigned short  mUserCost;
 };
 
-#endif /* end of include guard: MAP2D_H */
+#endif /* end of include guard: MAP_2D_H */
