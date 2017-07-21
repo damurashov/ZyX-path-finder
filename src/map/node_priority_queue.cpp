@@ -1,10 +1,10 @@
-#include "map_2d.h"
+#include "node_priority_queue.h"
 
-Map2d::NodePriorityQueue::NodePriorityQueue() : listHeader( new List() ) {
+Map::NodePriorityQueue::NodePriorityQueue() : listHeader( new List() ) {
     listHeader -> next = NULL;
 }
 
-Map2d::NodePriorityQueue::~NodePriorityQueue() {
+Map::NodePriorityQueue::~NodePriorityQueue() {
     // HEADER -> 1 -> 2 -> 3 -> ... -> NULL
     List* left = listHeader;
     List* right = listHeader;
@@ -15,17 +15,17 @@ Map2d::NodePriorityQueue::~NodePriorityQueue() {
     }
 }
 
-Map2d::NodePriorityQueue::List( const Node& node, ListItem* next ) :
+Map::NodePriorityQueue::List( const Node& node, ListItem* next ) :
     node( &node ),
     next( next ) {}
 
-Map2d::NodePriorityQueue::List() : node( NULL ), next( NULL ) {}
+Map::NodePriorityQueue::List() : node( NULL ), next( NULL ) {}
 
-void Map2d::NodePriorityQueue::insertAfter( const Node& node, List* const item ) {
+void Map::NodePriorityQueue::insertAfter( const Node& node, List* const item ) {
     item -> next = new List( node, item -> next );
 }
 
-void Map2d::NodePriorityQueue::push( const Node& node ) {
+void Map::NodePriorityQueue::push( const Node& node ) {
     List* ptr = listHeader;
 
     // if( listHeader -> next != NULL ) {
@@ -35,7 +35,7 @@ void Map2d::NodePriorityQueue::push( const Node& node ) {
     // }
 
     while( ptr -> next ) {
-        if( node <= ptr -> next -> node ) {
+        if( node < ptr -> next -> node || node == ptr -> next -> node ) {
             break;
         }
         ptr = ptr -> next
@@ -43,10 +43,21 @@ void Map2d::NodePriorityQueue::push( const Node& node ) {
     insertAfter( node, ptr );
 }
 
-Map2d::Node* Map2d::NodePriorityQueue::pop() {
+void Map::NodePriorityQueue::clear() {
+    List* left = listHeader -> next;
+    List* right = listHeader ->  next;
+
+    while( right = right -> next ) {
+        delete left;
+        left = right;
+    }
+    listHeader -> next = NULL;
+}
+
+Map::Node* Map::NodePriorityQueue::pop() {
     if( listHeader -> next != NULL ) {
         List* toDelete = listHeader -> next;
-        Map2d::Node* toReturn = listHeader -> next -> node;
+        Map::Node* toReturn = listHeader -> next -> node;
 
         listHeader -> next = listHeader -> next -> next;
 
