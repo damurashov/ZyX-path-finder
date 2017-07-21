@@ -34,6 +34,19 @@ public:
 
 
     /**
+     * Sets fIsClosed equal true
+     */
+    void close();
+
+
+    /**
+     * Checks whether or not the current node is closed.
+     * @return fIsClosed
+     */
+    bool isClosed();
+
+
+    /**
      * @return Returns a refer to a parent node.
      */
     Node* getParent() const;
@@ -78,7 +91,8 @@ private:
     unsigned        mF;
     unsigned        mDist;
     unsigned        mCost;
-    bool            fIsNew;
+    bool            fIsClosed;
+    //bool            fIsNew;
 
     Node();
 };

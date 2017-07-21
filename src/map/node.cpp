@@ -4,6 +4,8 @@ Map::Node() : COORD( new Coord() ) {}
 
 Map::Node( const Coord& coord ) :
     COORD( coord ) {
+
+    fIsClosed = false;
 }
 
 void Map::Node::notifyDest( const Coord& dest ) {
@@ -22,6 +24,14 @@ void Map::Node::setParent( const Node* const parent ) {
 
 void Map::Node::setUserCost( const short& cost ) {
     mUserCost = cost;
+}
+
+void Map::Node::close() {
+    fIsClosed = true;
+}
+
+bool Map::Node::isClosed() {
+    return fIsClosed;
 }
 
 Map::Node* Map::Node::getParent() {

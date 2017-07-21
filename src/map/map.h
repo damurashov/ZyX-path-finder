@@ -1,3 +1,7 @@
+// TODO: Reset and null-init
+// TODO: List of closed
+// 
+
 #ifndef MAP_H
 #define MAP_H
 

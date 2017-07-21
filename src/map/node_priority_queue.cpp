@@ -54,6 +54,10 @@ void Map::NodePriorityQueue::clear() {
     listHeader -> next = NULL;
 }
 
+bool Map::NodePriorityQueue::isEmpty() {
+    return ( listHeader -> next == NULL );
+}
+
 Map::Node* Map::NodePriorityQueue::pop() {
     if( listHeader -> next != NULL ) {
         List* toDelete = listHeader -> next;

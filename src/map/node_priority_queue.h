@@ -48,7 +48,14 @@ public:
      * @return Node*
      */
     Node* pop();
-    
+
+
+    /**
+     * Checks whether or not the queue is empty. It is if listHeader -> next == NULL
+     * @return listHeader -> next = NULL
+     */
+    bool isEmpty();
+
     NodePriorityQueue();
     virtual ~NodePriorityQueue();
 };
