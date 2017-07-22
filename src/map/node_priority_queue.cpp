@@ -25,8 +25,9 @@ void Map::NodePriorityQueue::insertAfter( const Node& node, List* const item ) {
     item -> next = new List( node, item -> next );
 }
 
-void Map::NodePriorityQueue::push( const Node& node ) {
+void Map::NodePriorityQueue::push( const Node* const nd ) {
     List* ptr = listHeader;
+    Node& node = nd;
 
     // if( listHeader -> next != NULL ) {
     //     while( node > ptr -> next -> node ) {

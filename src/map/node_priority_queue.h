@@ -36,7 +36,7 @@ public:
      * Pushes a new Node-object to a priority queue.
      * @param node Node-object
      */
-    void push( const Node& node );
+    void push( const Node* const node );
 
     /**
      * Erases the whole List

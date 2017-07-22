@@ -5,6 +5,7 @@ Map::Node() : COORD( new Coord() ) {}
 Map::Node( const Coord& coord ) :
     COORD( coord ) {
 
+    mParent = NULL;
     fIsClosed = false;
 }
 
@@ -48,6 +49,10 @@ unsigned Map::Node::getDist() {
 
 unsigned Map::Node::getCost() {
     return mCost;
+}
+
+Coord& getCoord() {
+    return COORD;
 }
 
 bool Map::Node::operator<( const Node& rhs ) {

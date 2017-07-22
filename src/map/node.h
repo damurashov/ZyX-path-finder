@@ -73,6 +73,13 @@ public:
     unsigned getCost() const;
 
 
+    /**
+     * Returns coordinates of the current node
+     * @return returns COORD
+     */
+    Coord& getCoord();
+
+
     //void operator=( const Node& rhs );
     bool operator<( const Node& rhs );
     bool operator>( const Node& rhs );
