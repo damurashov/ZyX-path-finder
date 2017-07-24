@@ -42,8 +42,20 @@ protected:
 
     virtual Node* createNode( const Coord& coord ) = 0;
     virtual Node* getNode( const Coord& coord ) = 0;
-    virtual std::list<Node*> getBorderNodes( const Coord& coord ) = 0;
+    virtual std::list<Node*> getBorderCoords( const Coord& coord ) = 0;
+
+    /**
+     * Returns estimated F for "B" after step from "A" to "B"
+     * @param  from A
+     * @param  to   B
+     * @return      cost( A ) + cost( STEP ) + userCost( B ) + distance( B )
+     */
     unsigned estF( const Node* const from, const Node* const to );
+
+    /**
+     * Adds node to mClosed and calls "node -> close()"
+     * @param node Node to be closed
+     */
     void closeNode( Node* const node );
     //void adoptNode( Node* const parent, Node* const child );
 

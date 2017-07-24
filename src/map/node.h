@@ -80,6 +80,13 @@ public:
     Coord& getCoord();
 
 
+    /**
+     * Returns mUserCost
+     * @return short mUserCost
+     */
+    short getUserCost();
+
+
     //void operator=( const Node& rhs );
     bool operator<( const Node& rhs );
     bool operator>( const Node& rhs );

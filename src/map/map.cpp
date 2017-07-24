@@ -11,7 +11,7 @@ void Map::getPath( const Coord& start, const Coord& end ) {
     // Check whether or not the start point is an obstacle
     if( getNode( start ) == NULL ) {
         currNode = createNode( start );
-    } else if( getNode( start ) -> getCost() == OBSTACLE || getNode( end ) -> getCost() == OBSTACLE ) {
+    } else if( getNode( start ) -> getUserCost() == OBSTACLE || getNode( end ) -> getUserCost() == OBSTACLE ) {
         return mTmpResult;
     }
 
@@ -19,7 +19,7 @@ void Map::getPath( const Coord& start, const Coord& end ) {
     buf = getBorderCoords( start );
     for( auto it = buf.begin(); it != buf.end(); ++it ) {
         if( getNode( *it ) != NULL ) {
-            if( getNode( *it ) -> getCost() != OBSTACLE ) {
+            if( getNode( *it ) -> getUserCost() != OBSTACLE ) {
                 mOpened.push( getNode( *it ) );
             }
         } else {
@@ -45,7 +45,7 @@ void Map::getPath( const Coord& start, const Coord& end ) {
             // Otherwise check if there's an opportunity to set the current node
             //   as a parent to the current border node
             } else if( ! currNode -> isClosed()
-                && ! currNode -> getCost() == OBSTACLE
+                && ! currNode -> getUserCost() == OBSTACLE
                 && estF( currNode, getNode( *it ) ) < getNode( *it ) -> getF() ) {
         // 3. ------------------------ Set parent
                 getNode( *it ) -> setParent( currentNode );
@@ -65,4 +65,29 @@ void Map::getPath( const Coord& start, const Coord& end ) {
             }
         }
     }
+}
+
+void Map::addObstacle( const Coord& coord ) {
+    if( getNode( coord ) == NULL )
+        createNode( coord );
+    getNode( coord ) -> setUserCost( OBSTACLE );
+}
+
+void Map::setCost( const Coord& coord, const unsigned short& cost ) {
+    if( getNode( coord ) == NULL )
+        createNode( coord );
+    getNode( coord ) -> setUserCost( cost );
+}
+
+std::list<Coord> Map::getPrevPath() {
+    return mTmpResult;
+}
+
+unsigned Map::estF( const Node* const from, const Node* const to ) {
+    return ( from -> getCost() + MOV_COST +  to -> getUserCost() + to -> getDist() );
+}
+
+void Map::closeNode( Node* const node ) {
+    mClosed.push_back( node );
+    node -> close();
 }

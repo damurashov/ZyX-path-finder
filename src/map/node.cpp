@@ -5,6 +5,7 @@ Map::Node() : COORD( new Coord() ) {}
 Map::Node( const Coord& coord ) :
     COORD( coord ) {
 
+    mUserCost = 0;
     mParent = NULL;
     fIsClosed = false;
 }

@@ -30,39 +30,29 @@ Map2d::Map2d( const unsigned short& x,
 //     }
 // }
 
+Node* Map2d::createNode( const Coord& coord ) {
+    mNodeMap[ coord.x ][ coord.y ] = new Node( coord );
+    return mNodeMap[ coord.x ][ coord.y ];
+}
+
 Node* Map2d::getNode( const Coord& coord ) {
     return mNodeMap[ coord.x ][ coord.y ];
 }
 
-std::list<Node*> Map2d::getBorderNodes( Node* currNode ) {
-    std::list<Node*> nodes;
+std::list<Coord> Map2d::getBorderCoords( const Coord& coord ) {
+    std::list<Coord> toReturn;
 
     for( int xAdd = -1; xAdd <= 1; xAdd++ ) {
-        for( int yAdd = -1; yAdd <= 1; yAdd++) {
-            if( xAdd != 0 && yAdd != 0 ) {
-                nodes.push_back( mNodeMap[ currNode -> getCoord().x + xAdd ][ currNode -> getCoord().y + yAdd ] );
+        for( int yAdd = -1; yAdd <= 1; yAdd++ ) {
+            if( coord.x + xAdd >= 0
+                && coord.y + yAdd >= 0
+                && coord.x + xAdd < SIZE_X
+                && coord.y + yAdd < SIZE_Y ) {
+                //--
+                toReturn.push_front( Coord( coord.x + xAdd, coord.y + yAdd ) );
             }
         }
     }
 
-    return nodes;
-}
-
-void Map2d::openNode( const Coord& coord ) {
-    Node* toCreate = getNode( coord );
-    toCreate = new Node( coord );
-}
-
-void Map2d::closeNode( const Coord& coord ) {
-    Node* toClose = getNode( coord );
-    toClose -> close();
-    mClosed.push_back( toClose );
-}
-
-void Map2d::addObstacle( const Coord& coord ) {
-    getNode( coord ) -> setUserCost( OBSTACLE );
-}
-
-void Map2d::setCost( const Coord& coord, const unsigned short& cost ) {
-    getNode( coord ) -> setUserCost( cost );
+    return toReturn;
 }
