@@ -14,7 +14,13 @@ void Map::Node::notifyDest( const Coord& dest ) {
     mDest = dest;
 }
 
-void Map::Node::setParent( const Node* const parent ) {
+void Map::Node::reset() {
+    mParent = NULL;
+    fIsClosed = false;
+    mCost = 0;
+}
+
+void Map::Node::setParent( const Node& parent ) {
     Coord tmpCoord = COORD - mDest;
 
     mParent = parent;
@@ -36,7 +42,11 @@ bool Map::Node::isClosed() {
     return fIsClosed;
 }
 
-Map::Node* Map::Node::getParent() {
+bool Map::Node::isObstacle() {
+    return mUserCost == Map::OBSTACLE ? true : false;
+}
+
+Map::Node& Map::Node::getParent() {
     return mParent;
 }
 
@@ -54,6 +64,10 @@ unsigned Map::Node::getCost() {
 
 Coord& getCoord() {
     return COORD;
+}
+
+bool Map::Node::isParent() {
+    return mParent == NULL ? false : true;
 }
 
 bool Map::Node::operator<( const Node& rhs ) {

@@ -4,10 +4,9 @@
 class Map::Node {
 public:
     /**
-     * Checks whether or not the node has a parent
-     * @return Returns fIsNew
+     * Set a node to the basic state, erase all the accumulated costs.
      */
-    //bool isNew() const;
+    void reset();
 
 
     /**
@@ -23,7 +22,7 @@ public:
      *   See: https://en.wikipedia.org/wiki/A*_search_algorithm
      * @param parent Parental node
      */
-    void setParent( const Node* const parent );
+    void setParent( const Node& );
 
 
     /**
@@ -47,9 +46,23 @@ public:
 
 
     /**
+     * Checks whether or not the node has a parent
+     * @return bool
+     */
+    bool isParent();
+
+
+    /**
+     * Checks whether or not the node is an obstacle
+     * @return bool
+     */
+    bool isObstacle();
+
+
+    /**
      * @return Returns a refer to a parent node.
      */
-    Node* getParent() const;
+    Node& getParent() const;
 
 
     /**

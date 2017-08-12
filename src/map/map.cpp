@@ -1,93 +1,128 @@
 #include "map.h"
 
-Map::Map() {}
+/*************************************************
+ *          Constructors, descructors            *
+ *************************************************/
 
-Map::~Map() {}
+ Map::Map() {}
 
-void Map::getPath( const Coord& start, const Coord& end ) {
-    Node* currNode;
-    std::list<Coord> buf;
+ Map::~Map() {}
 
-    // Check whether or not the start point is an obstacle
-    if( getNode( start ) == NULL ) {
-        currNode = createNode( start );
-    } else if( getNode( start ) -> getUserCost() == OBSTACLE || getNode( end ) -> getUserCost() == OBSTACLE ) {
-        return mTmpResult;
-    }
+/*************************************************
+ *              Protected functions              *
+ *************************************************/
 
-    // Open border nodes for the start point
-    buf = getBorderCoords( start );
-    for( auto it = buf.begin(); it != buf.end(); ++it ) {
-        if( getNode( *it ) != NULL ) {
-            if( getNode( *it ) -> getUserCost() != OBSTACLE ) {
-                mOpened.push( getNode( *it ) );
-            }
-        } else {
-            mOpened.push( createNode( *it ) );
-            getNode( *it ) -> setParent( currNode );
-        }
-    }
+bool Map::paveWay( const Coord& from, const Coord& to ) {
+    std::list<Coord> border
 
-    // Main loop.
-    while( !( currNode -> getCoord() == end ) && !( mOpened.isEmpty() ) ) {
-        // 1. ------------------------ Step to the cheapest node
-        currNode = mOpened.push();
-        closeNode( currNode );
+    if( from == to )
+        return true;
+    else if( mOpened.isEmpty() )
+        return false;
 
-        // 2. ------------------------ Open border nodes
-        buf = getBorderCoords( currNode -> getCoord() );
+    // Since the tree "mOpened" can contain pointers to equal nodes, there is an
+    //   opportunity to receive a node that have already
+    //   been closed. It means all the nodes that borders to the received one have already
+    //   been created and "adopted", and there is no need to do the same again.
+    if( ! getNode( from ).isClosed() )
+        closeNode( from );
+    else    // Otherwise there's no need to check border nodes again.
+        return paveWay( mOpened.popMin().getCoord(), to );
 
-        for( auto it = buf.begin(); it != buf.end(); ++it ) {
-            // If ptr is NULL
-            if( getNode( *it ) == NULL ) {
-                mOpened.push( createNode( *it ) );
-                getNode( *it ) -> setParent( currNode );
-            // Otherwise check if there's an opportunity to set the current node
-            //   as a parent to the current border node
-            } else if( ! currNode -> isClosed()
-                && ! currNode -> getUserCost() == OBSTACLE
-                && estF( currNode, getNode( *it ) ) < getNode( *it ) -> getF() ) {
-        // 3. ------------------------ Set parent
-                getNode( *it ) -> setParent( currentNode );
-            }
-        }
-
-    }
-
-    // Form the path
-    if( getNode( end ) != NULL ) {
-        if( getNode( end ) -> getParent() != NULL ) {
-            currNode = getNode( end );
-            mTmpResult.push_front( currNode -> getCoord() );
-            while( ! currNode -> getCoord() == getNode( start ) -> getCoord() ) {
-                currNode = currNode -> getParent();
-                mTmpResult.push_front( currNode -> getCoord() );
+    border = getBorderCoords( from );
+    for( auto it = border.begin(); it != border.end(); ++it ) { // Bypass all the "neighbours"
+        Node& node = getNode( *it );
+        if( !( node.isObstacle() || node.isClosed() ) ) {
+            if( ! node.isParent() ) {
+                node.setParent( getNode( from ) );
+                mOpened.push( node );
+            } else if ( newF( from, to ) < node.getF() ) {
+                node.setParent( getNode( from ) );
+                mOpened.push( node );   // That is why there is an opportunity
+                                        //   to push "twins" in the tree.
+                                        //   We set a new parent to a node and
+                                        //   push the node in the tree one more
+                                        //   time.
             }
         }
     }
+
+    return paveWay( mOpened.popMin().getCoord(), to );
 }
 
-void Map::addObstacle( const Coord& coord ) {
-    if( getNode( coord ) == NULL )
-        createNode( coord );
-    getNode( coord ) -> setUserCost( OBSTACLE );
+void Map::buildWay( const Coord& from, const Coord& to ) {
+    if( from == to ) {
+        mTmpResult.push_front( getNode( from ).getCoord() );
+        return;
+    }
+    mTmpResult.push_front( getNode( to ).getCoord() );
+    buildWay( from, getNode( to ).getParent().getCoord() );
 }
 
-void Map::setCost( const Coord& coord, const unsigned short& cost ) {
-    if( getNode( coord ) == NULL )
-        createNode( coord );
-    getNode( coord ) -> setUserCost( cost );
+void Map::closeNode( const Coord& coord ) {
+    getNode( coord ).close();
+    mClosed.push( getNode( coord ) );
 }
 
-std::list<Coord> Map::getPrevPath() {
+void Map::reset() {
+    while( ! mClosed.isEmpty() )
+        mClosed.popMin().reset();
+    while( ! mOpened.isEmpty() )
+        mOpened.popMin().reset();
+}
+
+/***********************************************************
+ *                      Public functions                   *
+ ***********************************************************/
+
+std::list<Coord>& Map::getPath( const Coord& from, const Coord& to ) {
+    Node::notifyDest( to );
+    mTmpResult.clear();
+    mOpened.push( getNode( from ) );
+    if( paveWay( from, to ) )
+        buildWay( from, to );
+    reset();
+    return mTmpResult;
+    // TODO: Clear all the nodes.
+}
+
+std::list<Coord>& Map::getLastPath() {
     return mTmpResult;
 }
 
-unsigned Map::estF( const Node* const from, const Node* const to ) {
-    return ( from -> getCost() + MOV_COST +  to -> getUserCost() + to -> getDist() );
+void Map::resetCost() {
+    for( auto it = mUserCost.begin(); it != mUserCost.end(); ++it )
+        getNode( *it ).setUserCost( DEFAULT_COST );
+    mUserCost.clear();
 }
 
-void Map::closeNode( Node* const node ) {
-    mClosed.push_back( node );
-    node -> close();
+void Map::setCost( const Coord& coord, unsigned char cost ) {
+    getNode( coord ).setUserCost( cost );
+    mUserCost.push_back( coord );
+}
+
+void Map::resetCost( const Coord& coord ) {
+    getNode( coord ).setUserCost( DEFAULT_COST );
+}
+
+int Map::getCost( const Coord& coord ) {
+    return getNode( coord ).getUserCost();
+}
+
+bool Map::isObstacle( const Coord& coord ) {
+    return getNode( coord ).isObstacle();
+}
+
+void Map::deleteObstacle() {
+    for( auto it = mObstacles.begin(); it != mObstacles.end(); ++it )
+        getNode( *it ).setUserCost( DEFAULT_COST );
+}
+
+void Map::deleteObstacle( const Coord& coord ) {
+    getNode( coord ).setUserCosT( DEFAULT_COST );
+}
+
+void Map::addObstacle( const Coord& coord ) {
+    mObstacles.push_back( coord );
+    getNode( coord ).setUserCost( OBSTACLE );
 }
