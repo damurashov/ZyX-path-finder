@@ -25,7 +25,7 @@ protected:
     void reset();
     void closeNode( const Node& node );
     void openNode( const Node& parent, const Node& child );
-    unsigned newF( const Coord& from, const Coord& to );
+    unsigned newF( const Node& from, const Node& to );
 
     AvlTree<Node> mOpened;
     AvlTree<Node> mClosed;
