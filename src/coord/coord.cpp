@@ -38,10 +38,10 @@ const Coord Coord::operator-( const Coord& rhs ) {
 }
 
 const Coord Coord::operator=( const Coord& rhs ) {
-    return Coord( rhs.x,
-        rhs.y,
-        rhs.z
-    );
+    x = rhs.x;
+    y = rhs.y;
+    z = rhs.z;
+    return *this;
 }
 
 bool Coord::operator>( const Coord& rhs ) {
@@ -53,5 +53,5 @@ bool Coord::operator<( const Coord& rhs ) {
 }
 
 bool Coord::operator==( const Coord& rhs ) {
-    return( abs( x ) + abs( y ) + abs( z ) == abs( rhs.x ) + abs( rhs.y ) + rhs.z );
+    return( abs( x ) + abs( y ) + abs( z ) == abs( rhs.x ) + abs( rhs.y ) + abs( rhs.z ) );
 }

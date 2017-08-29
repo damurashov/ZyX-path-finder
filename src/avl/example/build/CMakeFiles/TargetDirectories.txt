@@ -1,0 +1,5 @@
+D:/TemporaryFiles/Template-Cpp-AVL/example/build/CMakeFiles/my_project.dir
+D:/TemporaryFiles/Template-Cpp-AVL/example/build/CMakeFiles/ALL_BUILD.dir
+D:/TemporaryFiles/Template-Cpp-AVL/example/build/CMakeFiles/ZERO_CHECK.dir
+D:/TemporaryFiles/Template-Cpp-AVL/example/build/TCA/avl_tree/CMakeFiles/avl_tree.dir
+D:/TemporaryFiles/Template-Cpp-AVL/example/build/TCA/avl_tree/CMakeFiles/ALL_BUILD.dir

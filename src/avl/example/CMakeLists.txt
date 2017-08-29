@@ -1,0 +1,6 @@
+cmake_minimum_required( VERSION 2.6. )
+project( my_project )
+add_subdirectory( TCA )
+include_directories( TCA/avl_tree )
+add_executable( my_project main.cpp )
+target_link_libraries( my_project avl_tree )

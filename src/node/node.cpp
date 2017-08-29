@@ -6,6 +6,10 @@
 #include <cstdlib>
 #endif /* end of include guard: CSTDLIB_H */
 
+// ----------------------- Static members  -----------------------
+
+Coord Map::Node::mDest;
+
 // ------------------ Constructors, destructors ------------------
 
 Map::Node::Node() : COORD( -1, -1, -1 ) {}
@@ -13,9 +17,9 @@ Map::Node::Node() : COORD( -1, -1, -1 ) {}
 Map::Node::Node( const Coord& coord ) : COORD( coord ) {
     mParent = NULL;
     mUserCost = Map::DEFAULT_COST;
-    mDist = 0;
+    //mDist = 0;
     mCost = 0;
-    mF = 0;
+    //mF = 0;
     fIsClosed = false;
 }
 
@@ -29,9 +33,9 @@ void Map::Node::notifyDest( const Coord& coord ) {
 
 void Map::Node::reset() {
     mParent = NULL;
-    mDist = 0;
+    //mDist = 0;
     mCost = 0;
-    mF = 0;
+    //mF = 0;
     fIsClosed = false;
 }
 
@@ -39,7 +43,7 @@ void Map::Node::close() {
     fIsClosed = true;
 }
 
-void Map::Node::setParent( const Node& parent ) {
+void Map::Node::setParent( Node& parent ) {
     mParent = &parent;
     mCost = parent.getCost() + Map::MOV_COST + getUserCost();
 }
@@ -48,11 +52,11 @@ void Map::Node::setUserCost( const short& cost ) {
     mUserCost = cost;
 }
 
-Node&  Map::Node::getParent() {
+Map::Node& Map::Node::getParent() {
     return *mParent;
 }
 
-Coord& getCoord() {
+const Coord& Map::Node::getCoord() {
     return COORD;
 }
 
@@ -69,7 +73,7 @@ unsigned  Map::Node::getCost() {
     return mCost;
 }
 
-unsigned  Map::Node::getUserCost() {
+short Map::Node::getUserCost() {
     return mUserCost;
 }
 
@@ -86,9 +90,9 @@ bool Map::Node::isObstacle() {
 }
 
 bool Map::Node::operator>( const Node& rhs ) {
-    return getF() > rhs.getF();
+    return getF() > const_cast<Node&>(rhs).getF();
 }
 
 bool Map::Node::operator<( const Node& rhs ) {
-    return getF() < rhs.getF();
+    return getF() < const_cast<Node&>(rhs).getF();
 }

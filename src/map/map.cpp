@@ -27,7 +27,7 @@ bool Map::paveWay( const Coord& from, const Coord& to ) {
         Node& border = getNode( * it );
         if( ! border.isClosed()
             && ! border.isObstacle()
-            &&( ! border.isParentPresent() || newF( from, to ) < border.getF() )
+            &&( ! border.isParentPresent() || newF( current, border ) < border.getF() )
         ) // end of condition
             openNode( current, border );
     }
@@ -37,7 +37,7 @@ bool Map::paveWay( const Coord& from, const Coord& to ) {
 
 void Map::formWay( const Coord& from, const Coord& to ) {
     mTmpResult.push_front( to );
-    if( !( from.x == to.x && from.y == to.y && form.z == to.z ) );
+    if( !( from.x == to.x && from.y == to.y && from.z == to.z ) )
         formWay( from, getNode( to ).getParent().getCoord() );
 }
 
@@ -48,55 +48,55 @@ void Map::reset() {
         mOpened.popMin().reset();
 }
 
-void Map::closeNode( const Node& node ) {
+void Map::closeNode( Node& node ) {
     node.close();
     mClosed.push( node );
 }
 
-void Map::openNode( const Node& parent, const Node& child ) {
+void Map::openNode( Node& parent, Node& child ) {
     child.setParent( parent );
     mOpened.push( child );
 }
 
-unsigned Map::newF( const Node& from, const Node& to ) {
+unsigned Map::newF( Node& from, Node& to ) {
     return( from.getCost() + MOV_COST + to.getUserCost() + to.getDist() );
 }
 
 // --------------------- Public functions ---------------------
 
-std::list<Coord>& getLastPath() {
+std::list<Coord>& Map::getLastPath() {
     return mTmpResult;
 }
 
-std::list<Coord>& getPath( const Coord& from, const Coord& to ) {
+std::list<Coord>& Map::getPath( const Coord& from, const Coord& to ) {
     reset();
     mTmpResult.clear();
     Node::notifyDest( to );
     mOpened.push( getNode( from ) );
     if( paveWay( from, to ) )
-        buildWay();
+        formWay( from, to );
     return mTmpResult;
 }
 
-void setCost( const Coord& coord, unsigned char cost ) {
+void Map::setCost( const Coord& coord, unsigned char cost ) {
     getNode( coord ).setUserCost( cost );
     mUserCost.push_back( coord );
 }
 
-void resetCost( const Coord& coord ) {
+void Map::resetCost( const Coord& coord ) {
     getNode( coord ).setUserCost( DEFAULT_COST );
 }
 
-void deleteObstacle( const Coord& coord ) {
+void Map::deleteObstacle( const Coord& coord ) {
     getNode( coord ).setUserCost( DEFAULT_COST );
 }
 
-void addObstacle( const Coord& coord ) {
+void Map::addObstacle( const Coord& coord ) {
     getNode( coord ).setUserCost( OBSTACLE );
     mObstacles.push_back( coord );
 }
 
-void resetCost() {
+void Map::resetCost() {
     for( auto it = mUserCost.begin(); it != mUserCost.end(); ++it ) {
         resetCost( *it );
     }
@@ -104,12 +104,12 @@ void resetCost() {
                         // for content erasing
 }
 
-void deleteObstacle() {
+void Map::deleteObstacle() {
     for( auto it = mObstacles.begin(); it != mObstacles.end(); ++it ) {
         deleteObstacle( *it );
     }
 }
 
-int getCost( const Coord& coord ) {
+int Map::getCost( const Coord& coord ) {
     return getNode( coord ).getUserCost();
 }
