@@ -2,7 +2,7 @@
 #define MAP_H
 
 #include "avl_tree.h"
-#include "coord.h"      // TODO: implement class "Coord"
+#include "coord.h"
 #ifndef LIST_H
     #define LIST_H
     #include <list>
@@ -13,6 +13,8 @@ class Map {
 public:
     class Node; // TODO: Do not forget to make it protected
     static const int OBSTACLE = -1;
+
+    virtual bool isWithinBorders( const Coord& coord ) = 0;
 
     std::list<Coord>& getLastPath();
     std::list<Coord>& getPath( const Coord& from, const Coord& to );
@@ -26,7 +28,7 @@ public:
 
     Map();
     virtual ~Map();
-protected:
+//protected: // TODO: Uncomment protected section!
     static const int DEFAULT_COST = 0;
     static const int MOV_COST = 1;
     //static const int OBSTACLE = -1;
@@ -35,6 +37,7 @@ protected:
 
     virtual Node& getNode( const Coord& coord ) = 0;
     virtual void formBorderCoords( const Coord& coord ) = 0;
+    //virtual bool isWithinBorders( const Coord& coord ) = 0;
 
     bool paveWay( const Coord& from, const Coord& to );
     void formWay( const Coord& from, const Coord& to );
