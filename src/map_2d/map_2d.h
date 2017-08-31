@@ -4,22 +4,22 @@
 #include "map.h"
 
 class Map2d : public Map {
-    const unsigned SIZE_X;
-    const unsigned SIZE_Y;
-
-    //Node* getNode( Node* currNode, const Direction direction );
-    Map2d();
-
-    Node* mNodeMap[ SIZE_X ][ SIZE_Y ] = {NULL};
-
-protected:
-    Node* createNode( const Coord& coord ) override;
-    Node* getNode( const Coord& coord ) override;
-    std::list<Coord> getBorderCoords( const Coord& coord) override;
-
 public:
-    Map2d( const unsigned short& x,
-        const unsigned short& y);
+//private: TODO: uncomment all the viewspaces!
+    const unsigned short SIZE_X;
+    const unsigned short SIZE_Y;
+
+    Map::Node*** mNodeMap; //Node* mNodeMap[ SIZE_X ][ SIZE_Y ]
+    std::list<Node*> mAllocated;
+//protected:
+    virtual void formBorderCoords( const Coord& coord ) override;
+    virtual Map::Node& getNode( const Coord& coord ) override;
+    bool isWithinBorders( const Coord& coord ) override;
+
+    Map2d();
+public:
+    Map2d( unsigned short x, unsigned short y );
+    virtual ~Map2d();
 };
 
 #endif /* end of include guard: MAP_2D_H */
